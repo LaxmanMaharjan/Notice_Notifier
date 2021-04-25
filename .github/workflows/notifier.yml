@@ -1,0 +1,41 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Notifier
+
+# Controls when the action will run. 
+on:
+
+  schedule:
+    - cron: '30 11 * * *' # runs at 11:00 UTC == 5:15 Nepali time everyday
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: checkout repo content
+        uses: actions/checkout@v2 # checkout the repository content to github runner
+
+      - name: setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.7' # install the python version needed
+          
+      - name: install python packages
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: execute py script # run notice_scraper.py  to get the latest data
+        run: python notice_scraper.py
+          
+      - name: commit files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
+          git commit -m "update data" -a
+      - name: push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
