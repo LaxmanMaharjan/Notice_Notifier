@@ -1,2 +1,2 @@
 # Notice_Notifier
-Notice_Notifier notifies the notice of Khwopa College of Engineering published in the college website via email so that you don't have check for the notice in the website. 
+Notice_Notifier notifies the notice of Khwopa College of Engineering published in the college website via email(gmail) so that you don't have check for the notice in the website time and again. 
