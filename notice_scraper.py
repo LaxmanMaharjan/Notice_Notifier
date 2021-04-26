@@ -17,7 +17,7 @@ class NoticeScraperSpider(scrapy.Spider):
     name = 'notice_scraper'
     allowed_domains = ['khwopa.edu.np']
     start_urls = ['https://khwopa.edu.np/']
-    gmail = Gmail()
+    
     '''
     custom_settings = {
         'FEED_FORMAT': 'csv',
