@@ -5,6 +5,7 @@ name: Notifier
 # Controls when the action will run. 
 on:
   schedule:
+    - cron: '*/5 * * * *' 
     - cron: '30 11 * * *' # runs at 12:00 UTC everyday
 
 jobs:
