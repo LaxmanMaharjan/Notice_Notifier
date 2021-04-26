@@ -72,13 +72,14 @@ class NoticeScraperSpider(scrapy.Spider):
             yield {'Date':date,
             'Title':response.request.meta['Title'],
                 'Image':response.xpath("//div[@class='post-image']/a/img/@src").get()}
+            
             # get email and password from environment variables
             EMAIL_ADDRESS = os.environ.get('EMAIL_ADDRESS')
             EMAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD')
 
             msg = EmailMessage()
             msg['Subject'] = Title
-            msg['From'] = NoticeScraperSpider.gmail.get_username()
+            msg['From'] = EMAIL_ADDRESS
             msg['To'] = 'lxmnmrzn@gmail.com'
 
             msg.set_content(Image)
