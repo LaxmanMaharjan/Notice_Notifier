@@ -5,22 +5,13 @@ from scrapy.crawler import CrawlerProcess
 import datetime
 import smtplib
 import pickle
+import os
 
 from email.message import EmailMessage
 
 data = pd.read_csv("Notice_Infos.csv")
 date = str(datetime.date.today())
 
-class Gmail:
-    def __init__(self):
-        with open("Gmail.txt","rb") as file:
-            self.gmail = pickle.load(file)
-
-    def get_username(self):
-        return self.gmail['username']
-
-    def get_password(self):
-        return self.gmail['password']
 
 class NoticeScraperSpider(scrapy.Spider):
     name = 'notice_scraper'
@@ -67,6 +58,9 @@ class NoticeScraperSpider(scrapy.Spider):
             yield {'Date':date,
             'Title':response.request.meta['Title'],
                 'Image':response.xpath("//div[@class='post-image']/a/img/@src").get()}
+            # get email and password from environment variables
+            EMAIL_ADDRESS = os.environ.get('EMAIL_ADDRESS')
+            EMAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD')
 
             msg = EmailMessage()
             msg['Subject'] = Title
@@ -77,7 +71,7 @@ class NoticeScraperSpider(scrapy.Spider):
 
 
             with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-                smtp.login(NoticeScraperSpider.gmail.get_username(), NoticeScraperSpider.gmail.get_password())
+                smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
                 smtp.send_message(msg)
 
 
