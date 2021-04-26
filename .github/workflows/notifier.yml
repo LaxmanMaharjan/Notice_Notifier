@@ -4,9 +4,15 @@ name: Notifier
 
 # Controls when the action will run. 
 on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+    
   schedule:
     - cron: '*/5 * * * *' 
-    - cron: '30 11 * * *' # runs at 12:00 UTC everyday
+    - cron: '30 11 * * *' # runs at 11:30 UTC and 5:15 Nepalese Time everyday
 
 jobs:
   build:
