@@ -12,6 +12,8 @@ from email.message import EmailMessage
 data = pd.read_csv("Notice_Infos.csv")
 date = str(datetime.date.today())
 
+receivers = pd.read_csv("Recipients.csv")
+receivers_list = receivers.Email.tolist()
 
 class NoticeScraperSpider(scrapy.Spider):
     name = 'notice_scraper'
@@ -30,10 +32,11 @@ class NoticeScraperSpider(scrapy.Spider):
         """
 
         infos = response.xpath("//div[@class='col-md-4 wbod']/table[@class='table table-bordered table-hover']/tr/td/a")
-        for info in infos:
-            Link = info.xpath('.//@href').get()
-            Title = info.xpath('.//text()').get()
-            yield scrapy.Request(url= Link, callback=self.parse_info, meta={'Link':Link, 'Title':Title})
+        for i in range(0,5):
+            for info in infos:
+                Link = info.xpath('.//@href').get()
+                Title = info.xpath('.//text()').get()
+                yield scrapy.Request(url= Link, callback=self.parse_info, meta={'Link':Link, 'Title':Title})
 
     def parse_info(self, response):
         """This function is called with link and tile of notice as meta data and This
@@ -48,7 +51,7 @@ class NoticeScraperSpider(scrapy.Spider):
         # if the title of the notice doesn't exist in previous csv file it is new notice.
         # Since it is new Notice notify it and add it to previous existing csv file.
 
-        if (Title in data.Title.tolist()) == False:
+        if (Title in data.Title.head().tolist()) == False:
 
             # appending new notice in existing csv file
             data1 = data.append({'Date':date,
@@ -58,16 +61,21 @@ class NoticeScraperSpider(scrapy.Spider):
             yield {'Date':date,
             'Title':response.request.meta['Title'],
                 'Image':response.xpath("//div[@class='post-image']/a/img/@src").get()}
+           
             # get email and password from environment variables
             EMAIL_ADDRESS = os.environ.get('EMAIL_ADDRESS')
             EMAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD')
-
+            
+            message = f"This Email is to Notify you about Notice Published by Khwopa College of Engineering.\n\nNotice Details:\n{Image}\n\nYours Always,\nLaxman Maharjan"
+            
+            recipient = ', '.join(receivers_list)
+            
             msg = EmailMessage()
             msg['Subject'] = Title
-            msg['From'] = NoticeScraperSpider.gmail.get_username()
-            msg['To'] = 'lxmnmrzn@gmail.com'
+            msg['From'] = EMAIL_ADDRESS
+            msg['To'] = "lxmnmrzn@gmail.com"
 
-            msg.set_content(Image)
+            msg.set_content(message)
 
 
             with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
