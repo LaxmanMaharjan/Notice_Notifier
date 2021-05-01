@@ -94,7 +94,7 @@ class NoticeScraperSpider(scrapy.Spider):
             msg = EmailMessage()
             msg['Subject'] = Title
             msg['From'] = EMAIL_ADDRESS
-            msg['To'] = "lxmnmrzn@gmail.com"
+            msg['To'] = recipient
 
             msg.set_content(message)
 
