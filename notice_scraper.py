@@ -9,7 +9,7 @@ import os
 
 from email.message import EmailMessage
 
-data = pd.read_csv("Notice_Infos.csv")
+# data = pd.read_csv("Notice_Infos.csv") Not making it global to remove unboundlocalerror
 date = str(datetime.date.today())
 
 receivers = pd.read_csv("Recipients.csv")
@@ -62,7 +62,9 @@ class NoticeScraperSpider(scrapy.Spider):
         function now follows the link and scrape the image of notice and all together
         yields tile and image of the notice.
         """
-
+        
+        data = pd.read_csv("Notice_Infos.csv")
+        
         Title = response.request.meta['Title']
         Image = response.xpath("//div[@class='post-image']/a/img/@src").get()
 
@@ -71,7 +73,7 @@ class NoticeScraperSpider(scrapy.Spider):
         # Since it is new Notice notify it and add it to previous existing csv file.
 
         if (Title in data.Title.head().tolist()) == False:
-            global data
+       
             # appending new notice in existing csv file
             data = data.append({'Date':date,
             'Title':response.request.meta['Title'],
