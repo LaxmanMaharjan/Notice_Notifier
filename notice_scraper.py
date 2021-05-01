@@ -73,7 +73,7 @@ class NoticeScraperSpider(scrapy.Spider):
         if (Title in data.Title.head().tolist()) == False:
 
             # appending new notice in existing csv file
-            data1 = data.append({'Date':date,
+            data = data.append({'Date':date,
             'Title':response.request.meta['Title'],
                 'Image':response.xpath("//div[@class='post-image']/a/img/@src").get()},ignore_index=True).sort_values(by = 'Date', ascending = False)
 
@@ -102,7 +102,7 @@ class NoticeScraperSpider(scrapy.Spider):
                 smtp.send_message(msg)
 
 
-            data1.to_csv("Notice_Infos.csv",index=False)
+            data.to_csv("Notice_Infos.csv",index=False)
 
 
 if __name__=='__main__':
