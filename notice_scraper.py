@@ -18,8 +18,8 @@ receivers_list = receivers.Email.tolist()
 class NoticeScraperSpider(scrapy.Spider):
     name = 'notice_scraper'
     allowed_domains = ['khwopa.edu.np']
-    start_urls = ['https://khwopa.edu.np/']
-    gmail = Gmail()
+    base_url = "https://khwopa.edu.np/"
+    
     '''
     custom_settings = {
         'FEED_FORMAT': 'csv',
@@ -27,16 +27,35 @@ class NoticeScraperSpider(scrapy.Spider):
         'FEED_EXPORT_ENCODING' : 'utf-8'
     }
 '''
+        
+
+    # custom headers
+    headers = {
+        'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'
+    }
+
+    # crawler's entry point
+    def start_requests(self):
+        yield scrapy.Request(
+            url = self.base_url,
+            headers = self.headers,
+            callback = self.parse
+        )
+        
     def parse(self, response):
         """ This function first scrapes the link and Title of the Notice published in college website.
         """
 
         infos = response.xpath("//div[@class='col-md-4 wbod']/table[@class='table table-bordered table-hover']/tr/td/a")
-        for i in range(0,5):
-            for info in infos:
-                Link = info.xpath('.//@href').get()
-                Title = info.xpath('.//text()').get()
-                yield scrapy.Request(url= Link, callback=self.parse_info, meta={'Link':Link, 'Title':Title})
+        count = 0
+        
+        for info in infos:
+            count += 1
+            Link = info.xpath('.//@href').get()
+            Title = info.xpath('.//text()').get()
+            if count == 5:
+                break
+            yield scrapy.Request(url= Link, callback=self.parse_info, meta={'Link':Link, 'Title':Title})
 
     def parse_info(self, response):
         """This function is called with link and tile of notice as meta data and This
