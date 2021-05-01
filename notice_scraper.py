@@ -71,7 +71,7 @@ class NoticeScraperSpider(scrapy.Spider):
         # Since it is new Notice notify it and add it to previous existing csv file.
 
         if (Title in data.Title.head().tolist()) == False:
-
+            global data
             # appending new notice in existing csv file
             data = data.append({'Date':date,
             'Title':response.request.meta['Title'],
