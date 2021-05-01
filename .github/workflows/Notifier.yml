@@ -5,10 +5,10 @@ name: Notifier
 # Controls when the action will run. 
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+#   push:
+#     branches: [ master ]
+#   pull_request:
+#     branches: [ master ]
     
   schedule:
     #- cron: '*/5 * * * *' 
@@ -41,7 +41,7 @@ jobs:
       - name: Commit and push
         run: |-
           git diff
-          git config --global user.email "ipo-bot@example.com"
-          git config --global user.name "IPO-bot"
+          git config --global user.email "notice-bot@example.com"
+          git config --global user.name "Notce-bot"
           git diff --quiet || (git add Notice_Infos.csv && git commit -m "Adding New Notices")
           git push origin HEAD:master
